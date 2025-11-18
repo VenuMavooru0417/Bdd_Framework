@@ -1,0 +1,40 @@
+package ApiAutomationTesting;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import static io.restassured.RestAssured.*;
+
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+
+public class HttpRequesta {
+	@Test
+	public void test1() {
+		System.out.println("Rest Assured-----");
+
+		Response response = given()
+				.headers("x-api-key", "reqres-free-v1")
+				.when()
+				.get("https://reqres.in/api/unknown/2")
+				.thenReturn();
+
+		System.out.println(response.getStatusCode());
+		System.out.println(response.body().asString());
+
+      Assert.assertEquals(200, response.getStatusCode());
+      Assert.assertNotNull(response);
+      System.out.println(response);
+      
+      JsonPath js = response.body().jsonPath();
+      String data = js.get("data").toString();
+      System.out.println(data);
+      System.out.println(js.get("data.id").toString());
+      System.out.println(js.get("data.year").toString());
+      
+      Assert.assertEquals(2, Integer.parseInt(js.get("data.id").toString()));
+      Assert.assertEquals(2001, Integer.parseInt(js.get("data.year").toString()));
+      
+      
+	}
+}

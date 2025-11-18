@@ -1,0 +1,5 @@
+package ApiAutomationTesting.BDD_Framework;
+
+public class HttpRequests {
+
+}

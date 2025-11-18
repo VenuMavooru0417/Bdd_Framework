@@ -1,0 +1,142 @@
+package ApiAutomationTesting;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static io.restassured.RestAssured.*;
+import static org.testng.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+
+public class UserServicesTest {
+	
+	@Test
+    public void getLisOfUsers() {
+		
+		RestAssured.baseURI = "https://reqres.in";
+        Response res = given()
+                .when()
+                .get("/api/users?page=2")
+                .thenReturn();
+
+        Assert.assertEquals(res.getStatusCode(), 200);
+        System.out.println("Status Code: " + res.getStatusCode());
+        System.out.println("Test Passed Successfully........");
+
+        JsonPath jsonPath = res.body().jsonPath();
+        List<Map<String, Object>> datalist = jsonPath.getList("data");
+        System.out.println(datalist);
+
+        for (Map<String, Object> eachList : datalist) {
+            System.out.println(eachList);
+        }
+    }
+
+    @Test
+    public void getListOfUsersWithQueryParameter() {
+        RestAssured.baseURI = "https://reqres.in";
+        Response res = given().with().queryParam("page", "2").when().get("/api/users").thenReturn();
+
+        assertEquals(res.getStatusCode(), 200);
+        JsonPath jsonPath = res.body().jsonPath();
+        List<Map<String, Object>> datalist = jsonPath.getList("data");
+        System.out.println(datalist);
+
+        for (Map<String, Object> eachData : datalist) {
+            System.out.println(eachData);
+        }
+
+        System.out.println("---------------------------------------");
+        Map<String, String> quertparams = new HashMap<>();
+        quertparams.put("page", "2");
+        Response res2 = given().with().queryParams(quertparams).when().get("/api/users").thenReturn();
+
+        JsonPath jsonPath2 = res2.body().jsonPath();
+        List<Map<String, Object>> datalist2 = jsonPath.getList("data");
+        System.out.println(datalist2);
+
+        for (Map<String, Object> eachData : datalist2) {
+            System.out.println(eachData);
+        }
+
+    }
+
+    @Test
+    public void getListOfUsersWithPathParameter() {
+        RestAssured.baseURI = "https://reqres.in";
+        Response res = given()
+        		.headers("x-api-key","reqres-free-v1")
+        		.with()
+        		.pathParam("id", "2")
+        		.when()
+        		.get("/api/users/{id}")
+        		.thenReturn();
+
+        assertEquals(res.getStatusCode(), 200);
+        JsonPath jsonPath = res.body().jsonPath();
+        System.out.println(jsonPath.get("data").toString());
+
+
+        System.out.println("-----------------------------------------");
+
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put("id", "2");
+        Response res2 = given().with().pathParams(pathParams).when().get("/api/users/{id}").thenReturn();
+        assertEquals(res.getStatusCode(), 200);
+        JsonPath jsonPath2 = res2.body().jsonPath();
+        System.out.println(jsonPath2.get("data").toString());
+
+    }
+
+    @Test
+    public void getListOfUsers() throws Exception {
+        RestAssured.baseURI = "https://reqres.in";
+        Response res = given()
+        		.headers("x-api-key","reqres-free-v1")
+        		.with()
+        		.pathParam("id", "2")
+        		.when()
+        		.get("/api/users/{id}")
+        		.thenReturn();
+        Assert.assertEquals(res.getStatusCode(), 200);
+
+//        String dataString = res.jsonPath().get("data").toString();
+//        System.out.println(dataString);
+        
+//        ObjectMapper objMapper = new ObjectMapper();
+        Map data = (Map) (res.body().as(Map.class).get("data"));
+
+//        System.out.println((Map) (res.body().as(Map.class).get("data")));
+//        System.out.println("--------------------------------------");
+//        System.out.println(res.body().as(Map.class).get("support"));
+
+        System.out.println(data.get("id"));
+        System.out.println(data.get("email"));
+        System.out.println(data.get("first_name"));
+        System.out.println(data.get("last_name"));
+        System.out.println(data.get("avatar"));
+
+        assertEquals((int) data.get("id"), 2);
+
+//        Map<String, Map<String, Object>> taotalRes = given().with().pathParam("id", "2").when().get("/api/users/{id}").then().extract().as(Map.class);
+//        Map<String, Object> data1 = taotalRes.get("data");
+//
+//        System.out.println(data1.get("id"));
+//        System.out.println(data1.get("email"));
+//        System.out.println(data1.get("first_name"));
+//        System.out.println(data1.get("last_name"));
+//        System.out.println(data1.get("avatar"));
+
+
+    }
+
+}

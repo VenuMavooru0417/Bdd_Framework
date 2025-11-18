@@ -1,0 +1,9 @@
+package ApiAutomationTesting;
+
+import org.testng.annotations.Test;
+
+public class HttpRequesta {
+  @Test
+  public void f() {
+  }
+}

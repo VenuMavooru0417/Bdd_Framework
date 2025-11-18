@@ -1,0 +1,23 @@
+package ApiAutomationTesting;
+
+import org.testng.annotations.Test;
+
+import static io.restassured.RestAssured.*;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import junit.framework.Assert;
+
+public class UserServiceTestClass {
+	@Test
+	public void getListOfUsers() {
+		RestAssured.baseURI = "https://reqres.in";
+		Response res = given()
+				.when()
+				.get("/api/users?page=2")
+				.thenReturn();
+        System.out.println(res.getStatusCode());
+        Assert.assertEquals(res.getStatusCode(), 200);
+	}
+
+}

@@ -1,0 +1,49 @@
+package ApiAutomationTesting;
+
+import org.testng.annotations.Test;
+
+import static io.restassured.RestAssured.*;
+
+import java.util.List;
+import java.util.Map;
+
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+import junit.framework.Assert;
+
+public class UserServiceTestClass {
+	@Test
+	public void getListOfUsers() {
+		RestAssured.baseURI = "https://reqres.in";
+		Response res = given().when().get("/api/users?page=2").thenReturn();
+		System.out.println(res.getStatusCode());
+		Assert.assertEquals(res.getStatusCode(), 200);
+		JsonPath jsonPath = res.body().jsonPath();
+		List<Map<String, Object>> dataList = jsonPath.getList("data");
+		System.out.println(dataList);
+		for (Map<String, Object> eachList : dataList) {
+			System.out.println(eachList);
+		}
+		System.out.println("Status Code: " + res.getStatusCode());
+
+	}
+
+	@Test
+	public void PostRequestValidation() {
+		RestAssured.baseURI = "https://reqres.in";
+
+		// Request Body
+		String requestBody = "{\n" +
+		"  \"name\": \"Venu\",\n" +
+				"  \"job\": \"QA Tester\"\n" +
+		"}";
+		Response response = given().headers("x-api-key", "reqres-free-v1").contentType(ContentType.JSON)
+				.body(requestBody).log().all().when().post("/api/users").then().log().all().extract().response();
+		System.out.println(response.getStatusCode());
+//		Assert.assertEquals(response.getStatusCode(), 200);
+
+	}
+
+}
